@@ -1,0 +1,86 @@
+﻿@model IEnumerable<testforLukoil.Models.users>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+<table class="table table-striped " style="cursor: pointer;">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>email</th>
+            <th>firstname</th>
+            <th>lastname</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="setUserList">
+    </tbody>
+</table>
+@section scripts{
+    <script>
+        $.get("/users/GetUsers", null, DataBind);
+
+        function DataBind(UserList) {
+
+            var SetData = $("#setUserList");
+            for (var i = 0; i < UserList.length; i++) {
+
+                var Data = "<tr class='row_" + UserList[i].id+"'>" +
+                    "<td>" +
+                    UserList[i].id +
+                    "</td>" +
+                    "<td>" +
+                    UserList[i].email +
+                    "</td>" +
+                    "<td>" +
+                    UserList[i].firstname +
+                    "</td>" +
+                    "<td>" +
+                    UserList[i].lastname +
+                    "</td>" +
+                    "<td>" +
+                    "<a href='#'  onclick='showUser(" +
+                    UserList[i].id +
+                    ")' ><span class='glyphicon glyphicon-question-sign'></span></a>" +
+                    "</td>" +
+                    "<td>" +
+                    "<a href='#'  onclick='deleteUser(" +
+                    UserList[i].id +
+                    ")' ><span class='glyphicon glyphicon-trash'></span></a>" +
+                    "</td>" +
+                    "</tr>";
+                SetData.append(Data);
+            }
+        }
+
+
+        function showUser(id) {
+            var url = "/users/GetUserDetails?id=" + id;
+            $.ajax({
+                type: "GET",
+                url: url,
+                success: function (data) {
+                    console.log("смотри в консоле json!");
+                }
+            });
+        }
+
+        function deleteUser(id) {
+            $.ajax({
+                type: "POST",
+                url: "/users/DeleteUser?id=" + id,
+                success: function (data) {
+                    $(".row_" + id).remove();
+                }
+            });
+        }
+    </script>
+    }
